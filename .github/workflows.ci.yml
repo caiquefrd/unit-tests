@@ -1,5 +1,4 @@
 name: CI - Testes de Integração
-
 on:
   push:
     branches: [main]
