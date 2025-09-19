@@ -77,4 +77,4 @@ jobs:
           PGPASSWORD=testpass psql -h localhost -U testuser -p 5433 -d testdb -f src/configs/comandos.sql
 
       - name: Run tests
-        run: npm test
+        run: npm run test:ci

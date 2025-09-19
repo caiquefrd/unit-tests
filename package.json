@@ -9,6 +9,7 @@
   "dev": "ts-node-dev ./src",
   "test:db:init": "PGPASSWORD=testpass psql -h localhost -U testuser -p 5433 -d testdb -f src/configs/comandos.sql",
   "test": "npm run test:up && npm run test:db:init && cross-env NODE_ENV=test jest --detectOpenHandles --forceExit && npm run test:stop",
+  "test:ci": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit",
   "test:up": "docker compose -f docker-compose.test.yml up -d",
   "test:stop": "docker compose -f docker-compose.test.yml stop"
   },
