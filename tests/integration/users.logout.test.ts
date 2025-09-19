@@ -3,7 +3,6 @@ import app from '../../src/index';
 import db from '../../src/configs/db';
 
 describe('Users Integration Tests', () => {
-  // afterEach removed; global setup handles truncation
 
   it('should logout a logged-in user', async () => {
     // Cria usuário e faz login
@@ -30,6 +29,7 @@ describe('Users Integration Tests', () => {
     expect(res.body).toHaveProperty('success', true);
     expect(res.body.data).toHaveProperty('message');
   });
+
 
   it('should reject requests with a logged-out token', async () => {
     // Cria usuário e faz login
@@ -58,6 +58,7 @@ describe('Users Integration Tests', () => {
     expect(res.body).toHaveProperty('error');
   });
 
+  
   it('should reject requests with a token that was logged out after login', async () => {
     // Create user and login
     await request(app)

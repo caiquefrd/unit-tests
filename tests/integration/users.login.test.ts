@@ -3,7 +3,6 @@ import app from '../../src/index';
 import db from '../../src/configs/db';
 
 describe('Users Integration Tests', () => {
-  // afterEach removed; global setup handles truncation
 
   it('should login an existing user', async () => {
     // Primeiro cria o usuário
@@ -22,6 +21,7 @@ describe('Users Integration Tests', () => {
     expect(res.body.data.user).toHaveProperty('username', 'testuser2');
   });
 
+
     it('should block login with incorrect password', async () => {
       await request(app)
         .post('/users')
@@ -36,6 +36,7 @@ describe('Users Integration Tests', () => {
       expect(res.body).toHaveProperty('error');
     });
 
+
     it('should block login with inexistent user', async () => {
       const res = await request(app)
         .post('/users/login')
@@ -46,6 +47,7 @@ describe('Users Integration Tests', () => {
       expect(res.body).toHaveProperty('error');
     });
 
+    
     it('should block login with empty fields', async () => {
       const res = await request(app)
         .post('/users/login')

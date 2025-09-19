@@ -1,0 +1,83 @@
+name: CI - Testes de Integração
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --requirepass 123
+          --health-cmd="redis-cli ping"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DB_HOST: localhost
+      DB_USER: testuser
+      DB_PASSWORD: testpass
+      DB_NAME: testdb
+      DB_PORT: 5433
+      JWT_SECRET: "@123456789!@"
+      JWT_EXPIRES_IN: 1h
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: 123
+      NODE_ENV: test
+      PORT: 3002
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..20}; do
+            pg_isready -h localhost -p 5433 -U testuser && break
+            sleep 2
+          done
+
+      - name: Wait for Redis
+        run: |
+          for i in {1..20}; do
+            redis-cli -h localhost -p 6379 -a 123 ping && break
+            sleep 2
+          done
+
+      - name: Run migrations (cria tabelas)
+        run: |
+          PGPASSWORD=testpass psql -h localhost -U testuser -p 5433 -d testdb -f src/configs/comandos.sql
+
+      - name: Run tests
+        run: npm test

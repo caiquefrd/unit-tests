@@ -3,7 +3,6 @@ import app from '../../src/index';
 import db from '../../src/configs/db';
 
 describe('Users Integration Tests', () => {
-  // afterEach removed; global setup handles truncation
 
   it('should create a new user', async () => {
     const res = await request(app)
@@ -16,6 +15,7 @@ describe('Users Integration Tests', () => {
     expect(res.body).toHaveProperty('success', true);
     expect(res.body.data).toHaveProperty('message', 'Usuário criado com sucesso.');
   });
+
 
   it('should not allow duplicate usernames', async () => {
     // Cria usuário
@@ -31,6 +31,7 @@ describe('Users Integration Tests', () => {
     expect(res.body).toHaveProperty('error');
   });
 
+
   it('should not allow username too short', async () => {
     const res = await request(app)
       .post('/users')
@@ -40,6 +41,7 @@ describe('Users Integration Tests', () => {
     expect(res.body).toHaveProperty('error');
   });
 
+  
   it('should not allow password shorter than 6 characters', async () => {
     const res = await request(app)
       .post('/users')
